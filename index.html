@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Risk Assessment – Activity Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Risk-ledger theme — teal. Always light. */
+:root{
+  color-scheme:light;
+  --bg:#f3f8f7; --surface:#ffffff; --surface-2:#e8f2f0; --border:#d4e6e2; --border-2:#b6d4ce; --line:#deeae7;
+  --text:#132724; --muted:#54716b; --faint:#88a39c;
+  --primary:#0f766e; --primary-dark:#0b574f; --primary-soft:#d9efeb; --primary-ink:#ffffff; --accent:#8a5cf6; --accent-soft:#efe8fd;
+  --good:#15803d; --good-soft:#e5f5ea; --good-border:#a3d8b4; --bad:#b91c1c; --bad-soft:#fcebe9; --bad-border:#eeb2ac;
+  --warn:#b45309; --warn-soft:#fdf2e2; --warn-border:#eed4a8;
+  --low:#15803d; --low-soft:#e5f5ea; --med:#b45309; --med-soft:#fdf2e2; --high:#b91c1c; --high-soft:#fcebe9;
+  --topbar:rgba(243,248,247,.9);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:light;
+  --bg:#f3f8f7;--surface:#fff;--surface-2:#e8f2f0;--border:#d4e6e2;--border-2:#b6d4ce;--line:#deeae7;--text:#132724;--muted:#54716b;--faint:#88a39c;
+  --primary:#0f766e;--primary-dark:#0b574f;--primary-soft:#d9efeb;--primary-ink:#fff;--accent:#8a5cf6;--accent-soft:#efe8fd;
+  --good:#15803d;--good-soft:#e5f5ea;--good-border:#a3d8b4;--bad:#b91c1c;--bad-soft:#fcebe9;--bad-border:#eeb2ac;--warn:#b45309;--warn-soft:#fdf2e2;--warn-border:#eed4a8;
+  --low:#15803d;--low-soft:#e5f5ea;--med:#b45309;--med-soft:#fdf2e2;--high:#b91c1c;--high-soft:#fcebe9;--topbar:rgba(243,248,247,.9);}}
+:root[data-theme="dark"]{color-scheme:light;
+  --bg:#f3f8f7;--surface:#fff;--surface-2:#e8f2f0;--border:#d4e6e2;--border-2:#b6d4ce;--line:#deeae7;--text:#132724;--muted:#54716b;--faint:#88a39c;
+  --primary:#0f766e;--primary-dark:#0b574f;--primary-soft:#d9efeb;--primary-ink:#fff;--accent:#8a5cf6;--accent-soft:#efe8fd;
+  --good:#15803d;--good-soft:#e5f5ea;--good-border:#a3d8b4;--bad:#b91c1c;--bad-soft:#fcebe9;--bad-border:#eeb2ac;--warn:#b45309;--warn-soft:#fdf2e2;--warn-border:#eed4a8;
+  --low:#15803d;--low-soft:#e5f5ea;--med:#b45309;--med-soft:#fdf2e2;--high:#b91c1c;--high-soft:#fcebe9;--topbar:rgba(243,248,247,.9);}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 74px);background:#f3f8f7}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--topbar)}
+img,svg{max-width:100%}
+h1,h2,h3,h4{font-family:"Space Grotesk","Inter",system-ui,sans-serif;margin:0 0 .5em;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+h1{font-size:clamp(1.9rem,5vw,2.9rem)}h2{font-size:clamp(1.35rem,3vw,1.75rem)}h3{font-size:1.14rem}h4{font-size:1rem}
+p{margin:0 0 .8em}b,strong{font-weight:600}
+.mono,code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+code{font-size:.85em;background:var(--surface-2);border:1px solid var(--border);padding:.03em .35em;border-radius:5px;word-break:break-word}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+.wrap{max-width:840px;margin:0 auto;padding:22px 20px 72px}
+.small{font-size:.88rem}.muted{color:var(--muted)}
+.row{display:flex;align-items:center;gap:10px}.row.wrap{flex-wrap:wrap}.between{justify-content:space-between}.end{justify-content:flex-end}.center{justify-content:center}
+.stack>*+*{margin-top:16px}
+
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--topbar);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:840px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:9px;background:none;border:0;padding:0;cursor:pointer;color:var(--text);text-align:left}
+.brand:disabled{cursor:default}
+.brand-ic{width:28px;height:28px;border-radius:8px;background:var(--primary);color:var(--primary-ink);display:grid;place-items:center;font-size:14px;flex:none}
+.brand-t{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.98rem;line-height:1}
+.brand-t small{display:block;font-weight:400;font-size:.76rem;color:var(--muted);margin-top:2px;font-family:"Inter"}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.tb-steps{font-size:.82rem;color:var(--muted);font-weight:600}.tb-steps b{color:var(--primary)}
+.student{font-size:.84rem;line-height:1.15;text-align:right}.student small{display:block;color:var(--muted)}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:clamp(18px,3.2vw,28px)}
+.bare{padding:2px 0}
+.eyebrow{font-size:.76rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.lead{font-size:1.06rem;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted)}
+.pill.on{background:var(--primary-soft);border-color:#aedbd4;color:var(--primary)}
+.rail{height:4px;background:var(--surface-2);border-radius:99px;overflow:hidden}.rail>i{display:block;height:100%;background:var(--primary);transition:width .4s ease}
+.btn{appearance:none;border:1px solid var(--primary);border-radius:10px;padding:11px 18px;font-size:.96rem;font-weight:600;cursor:pointer;background:var(--primary);color:var(--primary-ink);display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:background .18s,border-color .18s}
+.btn:hover{background:var(--primary-dark);border-color:var(--primary-dark)}.btn:active{transform:translateY(1px)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--primary);border-color:var(--border-2)}.btn-ghost:hover{background:var(--primary-soft)}
+.btn-quiet{background:transparent;color:var(--muted);border-color:var(--border)}.btn-quiet:hover{background:var(--surface-2);color:var(--text)}
+.btn-sm{padding:7px 13px;font-size:.88rem;border-radius:8px}
+.field label{font-weight:600;font-size:.9rem;display:block;margin-bottom:6px}
+.input{font:inherit;padding:11px 13px;border-radius:9px;border:1px solid var(--border-2);background:var(--surface);color:var(--text);outline:none;width:100%;transition:border .18s}
+.input:focus{border-color:var(--primary)}
+.err{color:var(--bad);font-size:.88rem;font-weight:600;min-height:1.2em;margin-top:6px}
+input[type=range]{width:100%;accent-color:var(--primary);height:26px}
+
+.facts{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:7px}
+.facts li{display:flex;gap:9px;align-items:baseline;font-size:.96rem}.facts li::before{content:"▸";color:var(--accent);font-weight:700}
+.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.obj{margin:0;padding:0;list-style:none;display:grid;gap:7px;counter-reset:o}
+.obj li{display:flex;gap:10px;font-size:.96rem}
+.obj li::before{content:counter(o);counter-increment:o;flex:none;width:22px;height:22px;border-radius:6px;background:var(--primary-soft);color:var(--primary);font-size:.78rem;font-weight:700;display:grid;place-items:center}
+.marks{width:100%;border-collapse:collapse;font-size:.92rem}
+.marks th,.marks td{padding:9px 2px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.marks tr:last-child td{border-bottom:0}.marks th{font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.path{display:grid;gap:10px}
+.pcard{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--surface)}
+.pcard.locked{opacity:.55}
+.pnum{width:30px;height:30px;border-radius:8px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:.95rem;font-family:"Space Grotesk"}
+.pcard.quiz .pnum{background:var(--primary);color:var(--primary-ink)}
+.ptitle{font-weight:600;font-size:1rem}.pmeta{font-size:.82rem;color:var(--muted);margin-top:2px}
+
+.crumbs{font-size:.82rem;color:var(--muted);margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.key{border-left:3px solid var(--accent);padding:4px 0 4px 14px;margin-top:14px}.key b{color:var(--primary)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.box{border:1px solid var(--border);border-radius:11px;padding:13px 15px;background:var(--surface-2)}.box h4{color:var(--primary);margin-bottom:3px}
+.defn{display:grid;gap:8px;margin:10px 0}.defn .d{border:1px solid var(--border);border-radius:11px;padding:11px 14px;font-size:.93rem}.defn .d b{color:var(--primary)}
+.eq{font-family:"JetBrains Mono";background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;text-align:center;font-weight:600;margin:10px 0}
+.actwrap{border:1px solid var(--border-2);border-radius:13px;padding:clamp(15px,3vw,22px);margin-top:4px;background:var(--surface)}
+.act-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.act-label{font-size:.76rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+.badge{display:none;font-size:.8rem;font-weight:600;color:var(--good);align-items:center;gap:5px}.actwrap.done .badge{display:inline-flex}
+.task{font-weight:600;font-size:.98rem;margin-bottom:14px}
+.hintarea{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border-2)}
+.hintbox{background:var(--surface-2);border:1px solid var(--border);padding:9px 13px;border-radius:9px;margin-top:9px;font-size:.92rem;animation:fade .2s}
+.fb{padding:11px 14px;border-radius:9px;margin-top:11px;font-size:.94rem;border:1px solid var(--border);background:var(--surface-2);animation:fade .2s}
+.fb.good{background:var(--good-soft);border-color:var(--good-border);color:#0f5527}
+.fb.bad{background:var(--bad-soft);border-color:var(--bad-border);color:#841515}
+.fb .act-next{margin-top:9px}
+.stepnav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px}
+.dots{display:flex;gap:5px}.dots i{width:7px;height:7px;border-radius:99px;background:var(--border-2);transition:.3s}.dots i.ok{background:var(--accent)}.dots i.on{width:20px;background:var(--primary)}
+.part{margin:18px 0 9px;font-size:.98rem;font-weight:700;color:var(--primary);font-family:"Space Grotesk"}.part:first-child{margin-top:0}
+
+.tasks{display:grid;gap:6px;margin-top:14px}
+.tk{display:flex;gap:9px;align-items:center;font-size:.92rem;font-weight:500;color:var(--muted)}
+.tick{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border-2);display:grid;place-items:center;font-size:.72rem;flex:none;color:transparent;transition:.2s}
+.tk.ok{color:var(--good)}.tk.ok .tick{background:var(--good);border-color:var(--good);color:#fff}
+.ctl label{font-size:.84rem;font-weight:600;display:flex;justify-content:space-between;gap:8px;margin-bottom:2px}.ctl label b{font-family:"JetBrains Mono";color:var(--primary)}
+.toggle{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:.92rem;cursor:pointer;border:1px solid var(--border-2);border-radius:10px;padding:9px 13px;background:var(--surface)}
+.toggle input{display:none}.toggle .sw{width:38px;height:22px;border-radius:999px;background:var(--border-2);position:relative;transition:.2s;flex:none}
+.toggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on .sw{background:var(--primary)}.toggle.on .sw::after{left:18px}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:11px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{font-size:.88rem;font-weight:600;border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:8px;cursor:pointer}
+.seg button.on{background:var(--surface);color:var(--primary);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+
+.statusline{font-weight:600;border-radius:9px;padding:9px 13px;margin-top:10px;font-size:.95rem}
+.statusline.low{background:var(--low-soft);color:#0f5527;border:1px solid var(--good-border)}
+.statusline.med{background:var(--med-soft);color:#7a3c06;border:1px solid var(--warn-border)}
+.statusline.high{background:var(--high-soft);color:#841515;border:1px solid var(--bad-border)}
+.statusline.up{background:var(--good-soft);color:#0f5527;border:1px solid var(--good-border)}
+.statusline.neutral{background:var(--surface-2);color:var(--muted);border:1px solid var(--border)}
+
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-top:10px}
+.stat{border:1px solid var(--border);border-radius:11px;padding:9px 12px;background:var(--surface)}.stat .k{font-size:.8rem;color:var(--muted);font-weight:600}.stat .v{font-size:1.25rem;font-weight:700;font-family:"JetBrains Mono"}
+.bignum{font-family:"Space Grotesk";font-weight:700;font-size:1.5rem;color:var(--primary)}
+.meterbox{display:grid;gap:4px;margin:12px 0}.meterbox .mh{display:flex;justify-content:space-between;font-size:.86rem;font-weight:600}.meterbox .mh .v{font-family:"JetBrains Mono"}
+.meter{height:18px;border-radius:7px;background:var(--surface-2);border:1px solid var(--border);overflow:hidden;position:relative}.meter>i{display:block;height:100%;width:0;transition:width .35s,background .35s}
+.meter .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);opacity:.6}
+
+/* risk matrix */
+.rmatrix{overflow-x:auto}
+.rmatrix table{border-collapse:separate;border-spacing:4px;margin:4px auto}
+.rmatrix td,.rmatrix th{width:58px;height:46px;text-align:center;font-size:.82rem;font-weight:600}
+.rmatrix th{color:var(--muted);font-weight:600;font-size:.78rem}
+.cell{border-radius:8px;cursor:pointer;border:2px solid transparent;transition:.12s;font-family:"JetBrains Mono"}
+.cell:hover{border-color:var(--text)}
+.cell.lo{background:var(--low-soft);color:var(--low)}.cell.me{background:var(--med-soft);color:var(--med)}.cell.hi{background:var(--high-soft);color:var(--high)}
+.cell.pick{border-color:var(--text);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--text)}
+.axis-x{text-align:center;font-size:.8rem;color:var(--muted);margin-top:4px}
+.axis-y{writing-mode:vertical-rl;transform:rotate(180deg);font-size:.8rem;color:var(--muted)}
+
+/* assign rows */
+.arow{border:1px solid var(--border-2);border-radius:11px;padding:11px 13px;background:var(--surface);margin-bottom:9px}
+.arow .lab{font-weight:600;font-size:.94rem;margin-bottom:8px}
+.arow .verdict{font-size:.9rem;margin-top:8px}
+.arow.ok{border-color:var(--good-border);background:var(--good-soft)}.arow.no{border-color:var(--bad-border);background:var(--bad-soft)}
+
+/* quadrant */
+.quad{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0;max-width:420px}
+.qbox{border:1px solid var(--border-2);border-radius:10px;padding:10px;font-size:.84rem;background:var(--surface-2)}
+.qbox b{display:block;color:var(--primary)}
+
+/* choice */
+.cq-top{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--muted)}.cq-top .rail{flex:1}
+.cq-q{font-size:1.02rem;margin:12px 0}.opts{display:grid;gap:9px}
+.opt{font-size:.96rem;font-weight:500;padding:11px 14px;border-radius:9px;border:1px solid var(--border-2);background:var(--surface);color:var(--text);cursor:pointer;text-align:left;line-height:1.4;transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-soft)}.opt:disabled{cursor:default}
+.opt.right{border-color:var(--good);background:var(--good-soft);color:#0f5527}.opt.wrong{border-color:var(--bad);background:var(--bad-soft);color:#841515}
+
+/* order */
+.order{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.events{display:grid;gap:8px}.event{width:100%;font-weight:400}
+.timeline{list-style:none;padding:0;margin:0;display:grid;gap:7px}
+.tl-empty{border:1px dashed var(--border-2);border-radius:10px;padding:12px;color:var(--faint);font-size:.88rem;text-align:center}
+.tl-item{display:flex;gap:10px;align-items:flex-start;background:var(--good-soft);border:1px solid var(--good-border);border-radius:10px;padding:9px 11px;font-size:.9rem;animation:fade .25s}
+.tl-num{flex:none;width:22px;height:22px;border-radius:50%;background:var(--primary);color:var(--primary-ink);display:grid;place-items:center;font-size:.76rem;font-weight:700}
+.tl-ph{font-size:.78rem;font-weight:600;color:var(--primary)}
+.sub{font-weight:600;font-size:.9rem;margin-bottom:8px}
+
+.done-head{text-align:center;padding:6px 0 2px}
+.check{width:46px;height:46px;border-radius:50%;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-size:22px;margin:0 auto 10px}
+.take{margin:0;padding:0;list-style:none;display:grid;gap:7px}.take li{display:flex;gap:9px;font-size:.95rem}.take li::before{content:"✓";color:var(--good);font-weight:700}
+
+.qprompt{font-size:1.1rem;margin:12px 0}.qopts{display:grid;gap:9px}
+.qopt{display:flex;gap:11px;align-items:center;text-align:left;font-size:.96rem;padding:11px 13px;border-radius:10px;border:1px solid var(--border-2);background:var(--surface);color:var(--text);cursor:pointer;transition:.15s}
+.qopt:hover:not(:disabled){border-color:var(--primary);background:var(--surface-2)}.qopt:disabled{cursor:default}
+.ltr{width:27px;height:27px;border-radius:7px;background:var(--surface-2);display:grid;place-items:center;font-weight:700;font-size:.85rem;flex:none;border:1px solid var(--border)}
+.qopt.sel{border-color:var(--primary);background:var(--primary-soft)}.qopt.sel .ltr{background:var(--primary);color:#fff;border-color:var(--primary)}
+.qopt.right{border-color:var(--good);background:var(--good-soft)}.qopt.right .ltr{background:var(--good);color:#fff}
+.qopt.wrong{border-color:var(--bad);background:var(--bad-soft)}.qopt.wrong .ltr{background:var(--bad);color:#fff}
+.ring{width:140px;height:140px;border-radius:50%;background:conic-gradient(var(--primary) calc(var(--p)*1%),var(--surface-2) 0);display:grid;place-items:center;margin:0 auto}
+.ring>div{width:112px;height:112px;border-radius:50%;background:var(--surface);display:grid;place-items:center;text-align:center;line-height:1}
+.ring b{font-family:"Space Grotesk";font-size:2.3rem;color:var(--primary)}.ring span{display:block;color:var(--muted);font-size:.9rem;margin-top:3px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.kv div{border:1px solid var(--border);border-radius:9px;padding:8px 11px}.kv small{display:block;color:var(--muted);font-size:.8rem}.kv b{font-size:.98rem;font-weight:600;word-break:break-word}
+.status-pass{color:var(--good)}.status-fail{color:var(--bad)}
+.review{margin:0;padding:0;list-style:none;display:grid;gap:9px}.review li{border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:.92rem}.review .yes{color:var(--good);font-weight:600}.review .no{color:var(--bad);font-weight:600}
+.copybox{width:100%;min-height:140px;font-family:"JetBrains Mono";font-size:.82rem;border-radius:10px;border:1px solid var(--border-2);padding:11px;background:var(--surface);color:var(--text);margin-top:10px}
+.foot{text-align:center;color:var(--faint);font-size:.82rem;padding:0 20px 28px}
+.screen{animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .35s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:620px){.two,.who-grid,.kv,.order,.quad{grid-template-columns:1fr}.pcard{grid-template-columns:auto 1fr}.pcard .btn{grid-column:1/-1}.tb-steps{display:none}}
+</style>
+</head>
+<body>
+<header class="topbar" id="topbar"></header>
+<main id="app" class="wrap"></main>
+<footer class="foot">A safe, simulated risk-management console. Progress is saved in this browser only; on a shared computer, choose “Different student”.</footer>
+
+<script>
+(function(){
+"use strict";
+const rootEl=document.documentElement;
+function forceLight(){ if(rootEl.getAttribute("data-theme")!=="light") rootEl.setAttribute("data-theme","light"); }
+forceLight(); try{ new MutationObserver(forceLight).observe(rootEl,{attributes:true,attributeFilter:["data-theme"]}); }catch(e){}
+
+const KEY="ra-activity-lab-v1", TOTAL=15;
+const app=document.getElementById("app"), topbar=document.getElementById("topbar");
+function fresh(){ return {name:"",roll:"",maxPos:-1,done:{},results:[]}; }
+let S=fresh();
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const v=localStorage.getItem(KEY); if(v){ const o=JSON.parse(v); if(o&&typeof o==="object") S=Object.assign(fresh(),o); } }catch(e){} }
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function shake(el){ el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+function blk(h){ const d=document.createElement("div"); d.innerHTML=h; return d; }
+function money(n){ return "$"+Math.round(n).toLocaleString(); }
+function doneCount(){ return Object.keys(S.done).filter(k=>S.done[k]).length; }
+let mode="welcome";
+function riskBand(score){ if(score<=5) return {c:"lo",t:"LOW"}; if(score<=12) return {c:"me",t:"MEDIUM"}; return {c:"hi",t:"HIGH"}; }
+
+function choiceQuiz(root, cfg){
+  const items=cfg.items; let i=0,first=0,missed=false;
+  const wrap=document.createElement("div"); root.appendChild(wrap);
+  function show(){
+    if(i>=items.length){ wrap.innerHTML=`<div class="fb good">All ${items.length} correct — first try: <b>${first}/${items.length}</b>.</div>`; if(cfg.onDone) cfg.onDone(); return; }
+    const it=items[i]; missed=false; let opts=(it.opts||cfg.options).slice(); if(cfg.shuffle) opts=shuffle(opts);
+    wrap.innerHTML=`<div class="cq-top"><span>${i+1}/${items.length}</span><span class="rail"><i style="width:${i/items.length*100}%"></i></span></div>
+      <div class="cq-q">${it.q}</div><div class="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join("")}</div><div class="cqfb" aria-live="polite"></div>`;
+    const fb=wrap.querySelector(".cqfb");
+    wrap.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>{ const o=opts[+b.dataset.k];
+      if(o===it.a){ if(!missed) first++; wrap.querySelectorAll(".opt").forEach(x=>x.disabled=true); b.classList.add("right");
+        fb.innerHTML=`<div class="fb good">${it.why}<div class="act-next"><button class="btn btn-sm">${i+1<items.length?"Next":"Finish"}</button></div></div>`;
+        fb.querySelector("button").addEventListener("click",()=>{ i++; show(); });
+      } else { missed=true; b.classList.add("wrong"); b.disabled=true; shake(b); fb.innerHTML=`<div class="fb bad">${it.hint||cfg.hint||"Try another option."}</div>`; }
+    }));
+  }
+  show();
+}
+function orderGame(root, events, doneMsg, onDone){
+  let next=0; const order=shuffle(events.map((e,i)=>i));
+  root.innerHTML=`<div class="order"><div><div class="sub">Steps (shuffled)</div><div class="events" data-evs></div></div>
+    <div><div class="sub">Correct order</div><ol class="timeline" data-tl><li class="tl-empty">Click the step that comes first</li></ol></div></div><div data-fb aria-live="polite"></div>`;
+  const evs=root.querySelector("[data-evs]"), tl=root.querySelector("[data-tl]"), fb=root.querySelector("[data-fb]");
+  order.forEach(i=>{ const b=blk(`<button class="opt event">${events[i].t}</button>`).firstElementChild;
+    b.addEventListener("click",()=>{ if(i===next){ b.remove(); if(next===0) tl.innerHTML="";
+        tl.appendChild(blk(`<li class="tl-item"><span class="tl-num">${next+1}</span><div><div class="tl-ph">${events[i].phase}</div>${events[i].t}</div></li>`).firstElementChild); next++;
+        if(next===events.length){ fb.innerHTML=`<div class="fb good">${doneMsg}</div>`; onDone(); } else fb.innerHTML=`<div class="fb good">Correct — what’s next?</div>`;
+      } else { shake(b); fb.innerHTML=`<div class="fb bad">Not yet. ${events[next].clue}</div>`; } });
+    evs.appendChild(b); });
+}
+/* assign: rows each get one option; Check validates all */
+function assignGame(root, cfg, onDone){
+  const choice={};
+  root.innerHTML=`${cfg.intro?`<p class="small muted">${cfg.intro}</p>`:""}<div id="rows"></div>
+    <div class="row" style="margin-top:4px"><button class="btn btn-sm" id="check">${cfg.checkLabel||"Check"}</button></div><div id="afb" aria-live="polite"></div>`;
+  const rows=root.querySelector("#rows"), fb=root.querySelector("#afb");
+  cfg.items.forEach((it,idx)=>{ const el=blk(`<div class="arow" data-idx="${idx}"><div class="lab">${it.label}</div><div class="seg">${cfg.options.map(o=>`<button data-o="${o.id}">${o.label}</button>`).join("")}</div><div class="verdict"></div></div>`).firstElementChild;
+    el.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{ choice[idx]=b.dataset.o; el.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===b)); el.classList.remove("ok","no"); el.querySelector(".verdict").textContent=""; }));
+    rows.appendChild(el); });
+  root.querySelector("#check").addEventListener("click",()=>{
+    const unplaced=cfg.items.filter((_,i)=>!choice[i]).length; if(unplaced){ fb.innerHTML=`<div class="fb">Assign all ${cfg.items.length} first (${unplaced} left).</div>`; return; }
+    let allOk=true; cfg.items.forEach((it,i)=>{ const el=rows.children[i], ok=choice[i]===it.correct; if(!ok) allOk=false;
+      el.classList.remove("ok","no"); el.classList.add(ok?"ok":"no");
+      const name=cfg.options.find(o=>o.id===it.correct).label;
+      el.querySelector(".verdict").innerHTML=ok?`✓ ${it.why}`:`✗ Should be <b>${name}</b>. ${it.why}`; });
+    if(allOk){ fb.innerHTML=`<div class="fb good">${cfg.doneMsg||"✅ All correct!"}</div>`; onDone(); }
+    else fb.innerHTML=`<div class="fb bad">Some are wrong (marked ✗). Fix them and check again.</div>`;
+  });
+}
+function meter(id,label){ return `<div class="meterbox"><div class="mh"><span>${label}</span><span class="v" id="${id}v"></span></div><div class="meter"><i id="${id}"></i><span class="mark" id="${id}m" hidden></span></div></div>`; }
+
+/* ============ LESSON 1 ============ */
+function a_tag(root, api){
+  assignGame(root,{
+    intro:"Read this security story, then label each highlighted part. <br><span class='small'>“The <b>customer database</b> could be stolen by a <b>hacker</b> because the login page has an <b>unpatched SQL flaw</b>, so the team installed a <b>web application firewall</b>.”</span>",
+    options:[{id:"asset",label:"Asset"},{id:"threat",label:"Threat"},{id:"vuln",label:"Vulnerability"},{id:"control",label:"Control"}],
+    items:[
+      {label:"The customer database", correct:"asset", why:"An asset is something of value you protect."},
+      {label:"A hacker trying to steal data", correct:"threat", why:"A threat is a potential cause of harm (the threat agent/source)."},
+      {label:"The unpatched SQL-injection flaw", correct:"vuln", why:"A vulnerability is a weakness a threat can exploit."},
+      {label:"The web application firewall", correct:"control", why:"A control (safeguard) reduces the risk."},
+      {label:"The company’s reputation", correct:"asset", why:"Reputation is a valuable, if intangible, asset."},
+      {label:"Staff clicking phishing links (no training)", correct:"vuln", why:"A human weakness is a vulnerability a threat can exploit."}
+    ], checkLabel:"Check my labels", doneMsg:"✅ Labelled correctly. Risk only exists when a <b>threat</b> can exploit a <b>vulnerability</b> to harm an <b>asset</b> — and <b>controls</b> reduce it."
+  }, api.complete);
+}
+function a_equation(root, api){
+  let m1=false,m2=false;
+  root.innerHTML=`<p class="small muted">Risk is driven by two things: how <b>likely</b> the event is, and how big its <b>impact</b> would be. Slide both and watch the risk level.</p>
+    <div class="ctl"><label>Likelihood <b id="lL">3</b> / 5</label><input type="range" id="lik" min="1" max="5" value="3"></div>
+    <div class="ctl"><label>Impact <b id="iL">3</b> / 5</label><input type="range" id="imp" min="1" max="5" value="3"></div>
+    <div class="eq" id="eq"></div>
+    <div class="statusline neutral" id="st"></div>
+    <div class="tasks">
+      <div class="tk" id="t1"><span class="tick">✓</span>Produce a HIGH risk</div>
+      <div class="tk" id="t2"><span class="tick">✓</span>Produce a LOW risk</div>
+    </div>`;
+  const lik=root.querySelector("#lik"), imp=root.querySelector("#imp");
+  function update(){ const L=+lik.value, I=+imp.value, score=L*I, band=riskBand(score);
+    root.querySelector("#lL").textContent=L; root.querySelector("#iL").textContent=I;
+    root.querySelector("#eq").innerHTML=`Risk = Likelihood × Impact = ${L} × ${I} = <b style="color:var(--${band.c==='lo'?'low':band.c==='me'?'med':'high'})">${score}</b>`;
+    const st=root.querySelector("#st"); st.className="statusline "+band.c; st.innerHTML=`Risk level: <b>${band.t}</b>`;
+    if(band.t==="HIGH"&&!m1){ m1=true; root.querySelector("#t1").classList.add("ok"); }
+    if(band.t==="LOW"&&!m2){ m2=true; root.querySelector("#t2").classList.add("ok"); }
+    if(m1&&m2) api.complete();
+  }
+  [lik,imp].forEach(x=>x.addEventListener("input",update)); update();
+}
+function a_exists(root, api){
+  let m1=false,m2=false;
+  root.innerHTML=`<p class="small muted">A risk exists only when <b>all three</b> are present: a valuable asset, a threat, and a vulnerability the threat can exploit. Toggle each and see.</p>
+    <div class="row wrap" style="margin:4px 0 2px">
+      <label class="toggle on" id="aT"><input type="checkbox" id="asset" checked><span class="sw"></span>💎 Valuable asset</label>
+      <label class="toggle on" id="tT"><input type="checkbox" id="threat" checked><span class="sw"></span>😈 Threat present</label>
+      <label class="toggle on" id="vT"><input type="checkbox" id="vuln" checked><span class="sw"></span>🕳️ Vulnerability present</label>
+    </div>
+    <div class="statusline high" id="st"></div>
+    <div class="tasks">
+      <div class="tk" id="t1"><span class="tick">✓</span>See a real risk when all three are present</div>
+      <div class="tk" id="t2"><span class="tick">✓</span>Remove the vulnerability (patch it) and watch the risk disappear</div>
+    </div>`;
+  const a=root.querySelector("#asset"), t=root.querySelector("#threat"), v=root.querySelector("#vuln");
+  function update(){ root.querySelector("#aT").classList.toggle("on",a.checked); root.querySelector("#tT").classList.toggle("on",t.checked); root.querySelector("#vT").classList.toggle("on",v.checked);
+    const st=root.querySelector("#st");
+    if(a.checked&&t.checked&&v.checked){ st.className="statusline high"; st.innerHTML="⚠️ RISK EXISTS — a threat can exploit the vulnerability to harm the asset."; if(!m1){ m1=true; root.querySelector("#t1").classList.add("ok"); } }
+    else { st.className="statusline low"; let reason = !a.checked?"nothing of value is at stake": !t.checked?"no threat to exploit it": "the vulnerability is gone, so the threat has nothing to exploit";
+      st.innerHTML=`✅ No risk — ${reason}.`; if(!v.checked && a.checked && t.checked && !m2){ m2=true; root.querySelector("#t2").classList.add("ok"); } }
+    if(m1&&m2) api.complete();
+  }
+  [a,t,v].forEach(x=>x.addEventListener("change",update)); update();
+}
+function a_pdca(root, api){
+  orderGame(root,[
+    {t:"<b>Plan:</b> assess the risks and decide which controls to apply.", phase:"P", clue:"you must first decide what to do before doing it."},
+    {t:"<b>Do:</b> implement the chosen controls and policies.", phase:"D", clue:"after planning, you put the plan into action."},
+    {t:"<b>Check:</b> monitor and audit how well the controls are working.", phase:"C", clue:"once controls are running, you review their performance."},
+    {t:"<b>Act:</b> improve and correct based on what you found, then loop back.", phase:"A", clue:"finally you fix shortcomings — and start the cycle again."}
+  ], "✅ Plan → Do → Check → Act. An ISMS runs this cycle <b>continuously</b> — security is ongoing management, never ‘done’.", api.complete);
+}
+function a_vocab(root, api){
+  const A="Asset",T="Threat",V="Vulnerability",C="Control",R="Risk";
+  choiceQuiz(root,{ options:[A,T,V,C,R], shuffle:true,
+    hint:"Asset = what you protect. Threat = what could harm it. Vulnerability = the weakness. Control = the safeguard. Risk = likelihood × impact.",
+    items:[
+      {q:"A hospital’s patient records.", a:A, why:"Something valuable you protect — an asset."},
+      {q:"A flood, a hacker, or a careless employee.", a:T, why:"A potential source of harm — a threat."},
+      {q:"A server missing its latest security patch.", a:V, why:"An exploitable weakness — a vulnerability."},
+      {q:"Encrypting the backups and training staff.", a:C, why:"Measures that reduce exposure — controls."},
+      {q:"‘There’s a 20% chance of a breach costing us $500k this year.’", a:R, why:"A combination of likelihood and impact — that is risk."},
+      {q:"An ISMS such as ISO 27001 exists mainly to…", a:"Manage information-security risk systematically and continuously", opts:["Manage information-security risk systematically and continuously","Eliminate all risk forever","Replace the IT department","Speed up the internet"], why:"An ISMS is the management framework that governs the whole risk cycle."}
+    ], onDone:api.complete });
+}
+
+/* ============ LESSON 2 ============ */
+function a_matrix(root, api){
+  const scen=[
+    {q:"A phishing email reaching staff: <b>very likely</b> (5), but <b>minor</b> impact (2).", l:5, i:2},
+    {q:"An earthquake destroying the data centre: <b>rare</b> (1) but <b>catastrophic</b> (5).", l:1, i:5},
+    {q:"Ransomware encrypting all servers: <b>likely</b> (4) and <b>severe</b> (5).", l:4, i:5},
+    {q:"A single workstation failing: <b>unlikely</b> (2) and <b>low</b> impact (2).", l:2, i:2}
+  ];
+  let idx=0;
+  root.innerHTML=`<p class="small muted">A qualitative risk matrix rates risk = likelihood × impact. For each scenario, click the matching cell.</p>
+    <div class="rmatrix"><table><tbody id="mt"></tbody></table></div>
+    <div class="axis-x">Likelihood →</div>
+    <div class="cq-q" id="prompt"></div><div id="mfb" aria-live="polite"></div>`;
+  const mt=root.querySelector("#mt"), prompt=root.querySelector("#prompt"), fb=root.querySelector("#mfb");
+  let html="";
+  for(let i=5;i>=1;i--){ html+=`<tr><th>${i}</th>`; for(let l=1;l<=5;l++){ const s=l*i, b=riskBand(s).c; html+=`<td><button class="cell ${b}" data-l="${l}" data-i="${i}">${s}</button></td>`; } html+="</tr>"; }
+  html+=`<tr><th></th>${[1,2,3,4,5].map(l=>`<th>${l}</th>`).join("")}</tr>`;
+  mt.innerHTML=html;
+  mt.querySelectorAll(".cell").forEach(c=>c.addEventListener("click",()=>{
+    if(idx>=scen.length) return; const s=scen[idx];
+    mt.querySelectorAll(".cell").forEach(x=>x.classList.remove("pick"));
+    if(+c.dataset.l===s.l && +c.dataset.i===s.i){ c.classList.add("pick"); const band=riskBand(s.l*s.i);
+      fb.innerHTML=`<div class="fb good">Correct — risk score ${s.l*s.i}, rated <b>${band.t}</b>. ${band.t==="HIGH"?"Needs urgent treatment.":band.t==="MEDIUM"?"Treat when resources allow.":"Often acceptable."}<div class="act-next"><button class="btn btn-sm">${idx+1<scen.length?"Next":"Finish"}</button></div></div>`;
+      fb.querySelector("button").addEventListener("click",()=>{ idx++; show(); });
+    } else { shake(c); fb.innerHTML=`<div class="fb bad">Not that cell. Columns = likelihood, rows = impact. Re-read the numbers.</div>`; }
+  }));
+  function show(){ if(idx>=scen.length){ fb.innerHTML=`<div class="fb good">🎯 All placed. The matrix turns vague worries into a comparable rating.</div>`; prompt.textContent=""; api.complete(); return; }
+    prompt.innerHTML=`<span class="pill">${idx+1}/${scen.length}</span> ${scen[idx].q}`; }
+  show();
+}
+function a_ale(root, api){
+  let m1=false,m2=false;
+  root.innerHTML=`<p class="small muted">Quantitative analysis puts money on risk. Build the numbers and watch the formulas compute.</p>
+    <div class="ctl"><label>Asset Value (AV) <b id="avL"></b></label><input type="range" id="av" min="10000" max="500000" step="10000" value="100000"></div>
+    <div class="ctl"><label>Exposure Factor (EF): % lost if it happens <b id="efL"></b></label><input type="range" id="ef" min="0" max="100" step="10" value="50"></div>
+    <div class="ctl"><label>Annual Rate of Occurrence (ARO): times/year <b id="aroL"></b></label><input type="range" id="aro" min="0" max="5" step="1" value="2"></div>
+    <div class="eq" id="eqS"></div><div class="eq" id="eqA"></div>
+    <div class="stat-row"><div class="stat"><div class="k">SLE (one event)</div><div class="v" id="sle"></div></div><div class="stat"><div class="k">ALE (per year)</div><div class="v" id="aleV" style="color:var(--high)"></div></div></div>
+    <div class="tasks">
+      <div class="tk" id="t1"><span class="tick">✓</span>Build an annual loss (ALE) of at least $100,000</div>
+      <div class="tk" id="t2"><span class="tick">✓</span>Set the ARO to 0 and see the expected annual loss drop to $0</div>
+    </div>`;
+  const av=root.querySelector("#av"), ef=root.querySelector("#ef"), aro=root.querySelector("#aro");
+  function update(){ const AV=+av.value, EF=+ef.value/100, ARO=+aro.value, SLE=AV*EF, ALE=SLE*ARO;
+    root.querySelector("#avL").textContent=money(AV); root.querySelector("#efL").textContent=(EF*100)+"%"; root.querySelector("#aroL").textContent=ARO;
+    root.querySelector("#eqS").innerHTML=`SLE = AV × EF = ${money(AV)} × ${(EF*100)}% = <b>${money(SLE)}</b>`;
+    root.querySelector("#eqA").innerHTML=`ALE = SLE × ARO = ${money(SLE)} × ${ARO} = <b style="color:var(--high)">${money(ALE)}</b>`;
+    root.querySelector("#sle").textContent=money(SLE); root.querySelector("#aleV").textContent=money(ALE);
+    if(ALE>=100000&&!m1){ m1=true; root.querySelector("#t1").classList.add("ok"); }
+    if(ARO===0&&!m2){ m2=true; root.querySelector("#t2").classList.add("ok"); }
+    if(m1&&m2) api.complete();
+  }
+  [av,ef,aro].forEach(x=>x.addEventListener("input",update)); update();
+}
+function a_compute(root, api){
+  choiceQuiz(root,{ shuffle:true,
+    hint:"SLE = Asset Value × Exposure Factor. ALE = SLE × ARO (times per year).",
+    items:[
+      {q:"A laptop worth <b>$2,000</b>; if stolen you lose <b>100%</b>. The SLE is…", a:"$2,000", opts:["$2,000","$200","$20,000"], why:"SLE = $2,000 × 100% = $2,000."},
+      {q:"SLE is <b>$2,000</b> and laptops are stolen <b>3 times a year</b> (ARO = 3). The ALE is…", a:"$6,000", opts:["$6,000","$2,000","$600"], why:"ALE = SLE × ARO = $2,000 × 3 = $6,000 per year."},
+      {q:"A server worth <b>$50,000</b>; a fire would destroy <b>40%</b> of it, and fires occur about <b>once every 10 years</b> (ARO = 0.1). The ALE is…", a:"$2,000", opts:["$2,000","$20,000","$200"], why:"SLE = $50,000 × 40% = $20,000; ALE = $20,000 × 0.1 = $2,000."},
+      {q:"ALE is most useful because it…", a:"Lets you compare a risk’s yearly cost against the cost of a control", opts:["Lets you compare a risk’s yearly cost against the cost of a control","Removes the risk entirely","Is always exact","Needs no estimates"], why:"ALE turns risk into an annual dollar figure you can weigh against spending."}
+    ], onDone:api.complete });
+}
+function a_qualquant(root, api){
+  const QL="Qualitative", QN="Quantitative";
+  choiceQuiz(root,{ options:[QL,QN], shuffle:true,
+    hint:"Words and ratings (high/medium/low) = qualitative. Numbers and money (ALE, probabilities) = quantitative.",
+    items:[
+      {q:"Rating a risk as ‘High’ on a red/amber/green matrix.", a:QL, why:"Descriptive ratings, not hard numbers — qualitative."},
+      {q:"Calculating an Annual Loss Expectancy of $6,000.", a:QN, why:"A precise money figure — quantitative."},
+      {q:"A workshop where experts judge risks as low/medium/high.", a:QL, why:"Based on judgement and categories — qualitative."},
+      {q:"Using probabilities and asset values to rank risks by expected cost.", a:QN, why:"Numeric probability × value — quantitative."},
+      {q:"The main drawback of quantitative analysis is that…", a:"Reliable numbers (probabilities, values) are hard to obtain", opts:["Reliable numbers (probabilities, values) are hard to obtain","It uses no maths","It can’t rank risks","It is always wrong"], why:"Good data is scarce, so many organisations use qualitative or semi-quantitative methods."}
+    ], onDone:api.complete });
+}
+function a_costbenefit(root, api){
+  const REDUCTION=60000; let m1=false,m2=false;
+  root.innerHTML=`<p class="small muted">A proposed control would cut this risk’s annual loss (ALE) by <b>${money(REDUCTION)}/year</b>. Is it worth buying? Slide its annual cost.</p>
+    <div class="ctl"><label>Control cost <b id="cL"></b> / year</label><input type="range" id="cost" min="0" max="120000" step="5000" value="30000"></div>
+    <div class="stat-row">
+      <div class="stat"><div class="k">ALE reduction (benefit)</div><div class="v" style="color:var(--good)">${money(REDUCTION)}</div></div>
+      <div class="stat"><div class="k">Net benefit</div><div class="v" id="net"></div></div>
+    </div>
+    <div class="statusline neutral" id="st"></div>
+    <div class="tasks">
+      <div class="tk" id="t1"><span class="tick">✓</span>Find a cost where the control is worth buying</div>
+      <div class="tk" id="t2"><span class="tick">✓</span>Find a cost where it costs more than it saves</div>
+    </div>`;
+  const cost=root.querySelector("#cost");
+  function update(){ const C=+cost.value, net=REDUCTION-C; root.querySelector("#cL").textContent=money(C);
+    root.querySelector("#net").textContent=money(net); root.querySelector("#net").style.color= net>=0?"var(--good)":"var(--high)";
+    const st=root.querySelector("#st");
+    if(net>0){ st.className="statusline low"; st.innerHTML=`✅ Worth it — it saves ${money(net)} more than it costs. A control is justified when its cost is below the loss it prevents.`; if(!m1){ m1=true; root.querySelector("#t1").classList.add("ok"); } }
+    else if(net<0){ st.className="statusline high"; st.innerHTML=`❌ Not worth it — it costs ${money(-net)} more than it saves. Don’t spend more on a control than the risk itself.`; if(!m2){ m2=true; root.querySelector("#t2").classList.add("ok"); } }
+    else { st.className="statusline med"; st.innerHTML="Break-even — cost exactly equals the benefit."; }
+    if(m1&&m2) api.complete();
+  }
+  cost.addEventListener("input",update); update();
+}
+
+/* ============ LESSON 3 ============ */
+function a_four(root, api){
+  const AV="Avoid",TR="Transfer / share",MI="Mitigate / reduce",AC="Accept / retain";
+  choiceQuiz(root,{ options:[AV,TR,MI,AC], shuffle:true,
+    hint:"Avoid = stop doing the risky thing. Transfer = make someone else carry it (insurance/outsourcing). Mitigate = add controls. Accept = live with it.",
+    items:[
+      {q:"The company stops storing credit-card numbers it never really needed.", a:AV, why:"Eliminating the risky activity removes the risk entirely — avoidance."},
+      {q:"The firm buys cyber-insurance to cover breach losses.", a:TR, why:"The financial impact is shifted to the insurer — transfer."},
+      {q:"IT deploys antivirus, backups and staff training.", a:MI, why:"Adding safeguards to lower likelihood/impact — mitigation."},
+      {q:"For a tiny, cheap risk, management decides to simply live with it.", a:AC, why:"When treatment costs more than the risk, you accept it."},
+      {q:"A shop outsources payment processing to a specialist provider.", a:TR, why:"Handing the activity (and its risk) to a third party — transfer/share."},
+      {q:"A hospital cancels a risky new online service entirely.", a:AV, why:"Not doing the activity at all — avoidance."}
+    ], onDone:api.complete });
+}
+function a_chooser(root, api){
+  root.innerHTML=`<p class="small muted">The sensible treatment depends on where a risk sits. Keep this map in mind, then choose for each case.</p>
+    <div class="quad">
+      <div class="qbox"><b>Low likelihood · High impact</b>Transfer (e.g. insure)</div>
+      <div class="qbox"><b>High likelihood · High impact</b>Avoid or Mitigate</div>
+      <div class="qbox"><b>Low likelihood · Low impact</b>Accept</div>
+      <div class="qbox"><b>High likelihood · Low impact</b>Mitigate / reduce</div>
+    </div><div id="cq"></div>`;
+  choiceQuiz(root.querySelector("#cq"),{ shuffle:true,
+    items:[
+      {q:"A rare but devastating fire could destroy the uninsured data centre.", a:"Transfer (insure it)", opts:["Transfer (insure it)","Accept it","Ignore it"], why:"Low likelihood, high impact → shift the financial blow with insurance."},
+      {q:"Very frequent, serious malware infections via email.", a:"Mitigate (controls) or avoid", opts:["Mitigate (controls) or avoid","Accept it","Transfer only"], why:"High likelihood + high impact → reduce it with controls (or avoid the exposure)."},
+      {q:"Occasional minor printer jams.", a:"Accept it", opts:["Accept it","Buy expensive insurance","Shut down printing"], why:"Low likelihood, low impact → not worth spending on; accept."},
+      {q:"A risky feature with huge potential loss and little business value.", a:"Avoid (don’t do it)", opts:["Avoid (don’t do it)","Accept it","Just hope"], why:"If the activity isn’t worth its risk, eliminate it — avoidance."}
+    ], onDone:api.complete });
+}
+function a_residual(root, api){
+  const INHERENT=85, APPETITE=30, FLOOR=10;
+  const ctrls=[{id:"c1",t:"🔒 Access controls & encryption",r:25},{id:"c2",t:"💾 Backups & recovery plan",r:25},{id:"c3",t:"🎓 Staff training & monitoring",r:20}];
+  const on={}; let belowDone=false;
+  root.innerHTML=`<p class="small muted">Every risk starts at its <b>inherent</b> level (before controls). Controls reduce it to a <b>residual</b> level — but never to zero. Your risk <b>appetite</b> is the line you’re willing to live below.</p>
+    <div class="row wrap">${ctrls.map(c=>`<label class="toggle" id="${c.id}T"><input type="checkbox" data-id="${c.id}"><span class="sw"></span>${c.t} <span class="small muted">(−${c.r})</span></label>`).join("")}</div>
+    ${meter("risk","Residual risk (inherent 85, appetite line at 30)")}
+    <div class="statusline high" id="st"></div>
+    <div class="tasks">
+      <div class="tk" id="t1"><span class="tick">✓</span>Apply controls to bring residual risk below the appetite line (30)</div>
+    </div>`;
+  const markEl=root.querySelector("#riskm");
+  root.querySelectorAll(".toggle input").forEach(ch=>ch.addEventListener("change",function(){ on[this.dataset.id]=this.checked; document.getElementById(this.dataset.id+"T").classList.toggle("on",this.checked); update(); }));
+  function update(){ let r=INHERENT; ctrls.forEach(c=>{ if(on[c.id]) r-=c.r; }); r=Math.max(FLOOR,r);
+    root.querySelector("#risk").style.width=(r/INHERENT*100)+"%"; root.querySelector("#risk").style.background= r<=APPETITE?"var(--good)":r<=55?"var(--med)":"var(--high)";
+    root.querySelector("#riskv").textContent=r+" / 85"; markEl.hidden=false; markEl.style.left=(APPETITE/INHERENT*100)+"%";
+    const st=root.querySelector("#st");
+    if(r<=APPETITE){ st.className="statusline low"; st.innerHTML=`✅ Residual risk (${r}) is below appetite — you can <b>accept</b> what remains. Notice it never reaches 0: some <b>residual risk always remains</b>.`; if(!belowDone){ belowDone=true; root.querySelector("#t1").classList.add("ok"); api.complete(); } }
+    else { st.className="statusline "+(r<=55?"med":"high"); st.innerHTML=`Residual risk is ${r} — still above your appetite line of ${APPETITE}. Add more controls.`; }
+  }
+  update();
+}
+function a_cbtreat(root, api){
+  choiceQuiz(root,{ shuffle:true,
+    hint:"Compare the yearly cost of each option against the loss it prevents. The best treatment is cost-effective, not just ‘more security’.",
+    items:[
+      {q:"A risk with ALE <b>$100k</b>. Option A: a control costing $30k that cuts ALE to $40k. Option B: insurance at $90k/year. Which is better value?", a:"Option A — total yearly cost $70k vs $90k", opts:["Option A — total yearly cost $70k vs $90k","Option B — it feels safer","Neither; accept the full $100k"], why:"A: $30k control + $40k residual = $70k. B: $90k. A is cheaper for the same protection."},
+      {q:"A risk with ALE just <b>$500/year</b>. A control to remove it costs <b>$20,000/year</b>. The right choice is to…", a:"Accept the risk", opts:["Accept the risk","Buy the control anyway","Avoid all business"], why:"Spending $20k to save $500 is irrational — accept the small risk."},
+      {q:"Residual risk after good controls is still slightly above zero. You should…", a:"Accept it, since no control removes 100% of risk", opts:["Accept it, since no control removes 100% of risk","Keep spending until it reaches zero","Delete the asset"], why:"Zero risk is impossible; accept residual risk within your appetite."}
+    ], onDone:api.complete });
+}
+function a_register(root, api){
+  assignGame(root,{
+    intro:"You’re filling in the organisation’s <b>risk register</b>. Assign the most sensible treatment to each risk.",
+    options:[{id:"avoid",label:"Avoid"},{id:"transfer",label:"Transfer"},{id:"mitigate",label:"Mitigate"},{id:"accept",label:"Accept"}],
+    items:[
+      {label:"Occasional printer jams — very low impact", correct:"accept", why:"Too small to be worth spending on."},
+      {label:"Rare but catastrophic fire destroying the server room", correct:"transfer", why:"Low likelihood, huge impact → insure it."},
+      {label:"Frequent, serious malware arriving by email", correct:"mitigate", why:"High likelihood + impact → reduce with controls."},
+      {label:"Storing extra customer data you don’t actually need", correct:"avoid", why:"Stop collecting it — eliminate the exposure."},
+      {label:"Weak employee passwords (likely, moderate impact)", correct:"mitigate", why:"Add a password policy and MFA — mitigation."}
+    ], checkLabel:"Submit risk register", doneMsg:"✅ A sound risk register! You matched each risk to a cost-effective treatment — exactly what risk management is."
+  }, api.complete);
+}
+
+/* ============ modules ============ */
+const MODULES=[
+{ title:"The Language of Risk and the ISMS Cycle", short:"Risk language & ISMS",
+  blurb:"The vocabulary of risk, how risk arises, and the management cycle that governs it.",
+  takeaways:[
+    "Security manages risk; it can never eliminate it completely.",
+    "Key terms: asset (what you protect), threat (what could harm it), vulnerability (the weakness), control (the safeguard), risk (likelihood × impact).",
+    "A risk exists only when a threat can exploit a vulnerability to harm a valuable asset.",
+    "An ISMS (e.g. ISO 27001) governs risk continuously through the Plan–Do–Check–Act cycle."
+  ],
+  steps:[
+    { title:"Risk is managed, not eliminated",
+      concept:`<p>You can’t make anything perfectly safe — there’s always some chance of harm. So security isn’t about removing all risk; it’s about <b>managing</b> it to an acceptable level, at a sensible cost. That starts with a shared vocabulary:</p>
+        <div class="defn">
+          <div class="d"><b>Asset</b> — something of value you protect (data, systems, reputation).</div>
+          <div class="d"><b>Threat</b> — a potential cause of harm (a hacker, a flood, a careless user).</div>
+          <div class="d"><b>Vulnerability</b> — a weakness a threat can exploit.</div>
+          <div class="d"><b>Control / safeguard</b> — a measure that reduces the risk.</div>
+          <div class="d"><b>Risk</b> — the chance a threat exploits a vulnerability, and the impact if it does.</div>
+        </div>`,
+      key:"Asset · threat · vulnerability · control · risk — the five words the whole field is built on.",
+      task:"Read the security story and label each highlighted part.",
+      hints:["What has value is the asset; what could harm it is the threat.","The weakness is the vulnerability; the safeguard is the control."],
+      activity:a_tag },
+    { title:"What drives the size of a risk",
+      concept:`<p>A risk’s size comes from two factors multiplied together:</p>
+        <div class="eq">Risk = Likelihood × Impact</div>
+        <p>A very likely event with tiny impact can be a smaller risk than a rare but catastrophic one. Both factors matter — change either and the risk changes.</p>`,
+      key:"Risk grows with both how <b>likely</b> it is and how <b>bad</b> it would be.",
+      task:"Move the sliders to create a HIGH risk, then a LOW risk.",
+      hints:["Push both sliders up for a high risk.","Bring both down for a low risk — one high factor alone may only be medium."],
+      activity:a_equation },
+    { title:"When does a risk actually exist?",
+      concept:`<p>A risk needs <b>three ingredients at once</b>: a valuable <b>asset</b>, a <b>threat</b>, and a <b>vulnerability</b> the threat can exploit. Take away any one and the risk disappears — which is exactly how controls work (for example, patching removes the vulnerability).</p>`,
+      key:"No asset, no threat, or no vulnerability → no risk.",
+      task:"Toggle the three ingredients. See the risk appear, then patch the vulnerability to remove it.",
+      hints:["Turn all three on to see a real risk.","Turn off the vulnerability (patch it) and watch the risk vanish."],
+      activity:a_exists },
+    { title:"The ISMS and the PDCA cycle",
+      concept:`<p>Managing risk isn’t a one-off project. An <b>Information Security Management System (ISMS)</b> — such as the ISO 27001 standard — governs it as a <b>continuous cycle</b>:</p>
+        <div class="defn"><div class="d"><b>Plan</b> — assess risks, choose controls.</div><div class="d"><b>Do</b> — implement them.</div><div class="d"><b>Check</b> — monitor and audit.</div><div class="d"><b>Act</b> — improve, then repeat.</div></div>`,
+      key:"Plan → Do → Check → Act, over and over — security is ongoing management.",
+      task:"Put the four phases of the ISMS cycle in order.",
+      hints:["You plan before you act.","After doing, you check results, then act to improve — and loop."],
+      activity:a_pdca },
+    { title:"Speaking the language",
+      concept:`<p>Fluency with the vocabulary lets you communicate risk clearly — to colleagues, auditors and management. Quick practice before moving on to measuring risk.</p>`,
+      key:"Name each thing correctly: asset, threat, vulnerability, control or risk.",
+      task:"Classify each item.",
+      hints:["Ask: is it what you protect, what threatens it, the weakness, the safeguard, or the overall risk?","‘Chance × cost’ phrasing describes a risk."],
+      activity:a_vocab }
+  ]
+},
+{ title:"Methods of Risk Analysis", short:"Analysis methods",
+  blurb:"Rating risk with words, or measuring it with money — and judging when a control is worth it.",
+  takeaways:[
+    "Qualitative analysis rates risk in categories (high/medium/low); quantitative puts money on it.",
+    "A risk matrix plots likelihood against impact to give a comparable rating.",
+    "Quantitative formulas: SLE = Asset Value × Exposure Factor; ALE = SLE × ARO.",
+    "A control is worth buying when its cost is less than the loss (ALE) it prevents."
+  ],
+  steps:[
+    { title:"The qualitative risk matrix",
+      concept:`<p>The quickest way to compare risks is a <b>qualitative</b> rating: judge each risk’s likelihood and impact on a simple scale, then read off a colour-coded level. It needs no hard numbers — just informed judgement — which is why it’s so widely used.</p>`,
+      key:"Likelihood × impact on a grid gives a quick, comparable rating.",
+      task:"For each scenario, click the matching cell on the risk matrix.",
+      hints:["Columns are likelihood (1–5); rows are impact (1–5).","Read the two numbers in the scenario and find their cell."],
+      activity:a_matrix },
+    { title:"Putting money on risk: ALE",
+      concept:`<p><b>Quantitative</b> analysis expresses risk in money, so you can compare it with the cost of fixing it. Three building blocks:</p>
+        <div class="defn">
+          <div class="d"><b>SLE</b> (Single Loss Expectancy) = Asset Value × Exposure Factor — the loss from <b>one</b> event.</div>
+          <div class="d"><b>ARO</b> (Annual Rate of Occurrence) — how many times per year it’s expected.</div>
+          <div class="d"><b>ALE</b> (Annualized Loss Expectancy) = SLE × ARO — the expected loss <b>per year</b>.</div>
+        </div>`,
+      key:"SLE = AV × EF · ALE = SLE × ARO.",
+      task:"Build the numbers and watch SLE and ALE compute. Reach a $100k ALE, then set ARO to 0.",
+      hints:["Raise asset value, exposure and ARO for a bigger ALE.","With ARO = 0 (it never happens), the expected annual loss is $0."],
+      activity:a_ale },
+    { title:"Working the numbers",
+      concept:`<p>Practise the two formulas on real figures. Being able to compute an ALE in your head is what lets you argue for (or against) spending on a control.</p>
+        <div class="eq">SLE = AV × EF &nbsp;&nbsp;|&nbsp;&nbsp; ALE = SLE × ARO</div>`,
+      key:"Multiply value by exposure for one loss, then by yearly rate for the annual figure.",
+      task:"Compute the SLE and ALE in each case.",
+      hints:["SLE first: asset value × exposure factor.","Then ALE: SLE × how many times per year (ARO can be a fraction)."],
+      activity:a_compute },
+    { title:"Qualitative vs quantitative",
+      concept:`<p>Both methods have their place:</p>
+        <div class="two"><div class="box"><h4>Qualitative</h4>Fast, needs no precise data, easy to communicate — but subjective.</div>
+        <div class="box"><h4>Quantitative</h4>Objective money figures for cost-benefit — but reliable numbers are hard to get.</div></div>
+        <p>Many organisations use a <b>semi-quantitative</b> blend.</p>`,
+      key:"Words are fast but subjective; numbers are precise but data-hungry.",
+      task:"Decide which method each example uses.",
+      hints:["Ratings and categories → qualitative.","Money, probabilities and ALE → quantitative."],
+      activity:a_qualquant },
+    { title:"Is the control worth it?",
+      concept:`<p>The whole point of measuring risk is to spend wisely. A control is justified only when it costs <b>less</b> than the loss it prevents:</p>
+        <div class="eq">Net benefit = ALE reduction − control cost</div>
+        <p>If a control costs more than the risk itself, you shouldn’t buy it — that money is better spent elsewhere.</p>`,
+      key:"Buy a control only when its cost is below the loss it prevents.",
+      task:"Slide the control’s cost to find where it’s worth buying — and where it isn’t.",
+      hints:["Below the $60k saving → worth it (positive net benefit).","Above the saving → it costs more than it prevents."],
+      activity:a_costbenefit }
+  ]
+},
+{ title:"Risk Treatment: The Four Choices", short:"The four treatments",
+  blurb:"Once a risk is understood, you have exactly four ways to respond to it.",
+  takeaways:[
+    "Four treatments: avoid (eliminate the activity), transfer (insure/outsource), mitigate (add controls), accept (live with it).",
+    "The right choice depends on where the risk sits: rare-but-severe → transfer, frequent-and-severe → mitigate/avoid, trivial → accept.",
+    "Controls reduce risk to a residual level that never reaches zero — some residual risk always remains.",
+    "Treatment is a cost-benefit decision: accept residual risk within your risk appetite."
+  ],
+  steps:[
+    { title:"The four treatments",
+      concept:`<p>After analysing a risk, you have exactly <b>four</b> ways to treat it:</p>
+        <div class="defn">
+          <div class="d"><b>🚫 Avoid</b> — stop doing the risky activity altogether.</div>
+          <div class="d"><b>🤝 Transfer / share</b> — make someone else carry it (insurance, outsourcing).</div>
+          <div class="d"><b>🛡️ Mitigate / reduce</b> — add controls to lower likelihood or impact.</div>
+          <div class="d"><b>✅ Accept / retain</b> — knowingly live with it (usually small risks).</div>
+        </div>`,
+      key:"Avoid · Transfer · Mitigate · Accept — every response is one of these four.",
+      task:"Classify each response into one of the four treatments.",
+      hints:["Stopping the activity = avoid; insuring/outsourcing = transfer.","Adding safeguards = mitigate; living with it = accept."],
+      activity:a_four },
+    { title:"Choosing the right one",
+      concept:`<p>Which treatment fits depends on the risk’s <b>likelihood</b> and <b>impact</b>:</p>
+        <div class="quad">
+          <div class="qbox"><b>Rare · severe</b>Transfer (insure)</div>
+          <div class="qbox"><b>Frequent · severe</b>Avoid or mitigate</div>
+          <div class="qbox"><b>Rare · minor</b>Accept</div>
+          <div class="qbox"><b>Frequent · minor</b>Mitigate</div>
+        </div>`,
+      key:"Match the treatment to the risk’s position — don’t over- or under-spend.",
+      task:"Pick the sensible treatment for each risk.",
+      hints:["Rare but devastating → transfer the financial blow.","Trivial → accept; frequent and serious → reduce or avoid."],
+      activity:a_chooser },
+    { title:"Residual risk",
+      concept:`<p>Controls reduce a risk from its <b>inherent</b> level (before treatment) to a <b>residual</b> level (what’s left after) — but they can <b>never</b> remove it completely. Your <b>risk appetite</b> is the level you’re willing to accept. Once residual risk drops below it, you accept what remains.</p>`,
+      key:"Controls leave a residual risk; accept it once it’s within your appetite.",
+      task:"Apply controls to bring the residual risk below your appetite line.",
+      hints:["Turn on controls to push the risk down.","Notice it floors out above zero — you can’t reach perfect safety."],
+      activity:a_residual },
+    { title:"Treatment as a cost-benefit decision",
+      concept:`<p>Treatment is always about value, not fear. Spending $20,000 to prevent a $500 loss is a bad decision, even though it ‘adds security’. The goal is the most risk reduction per dollar — and accepting the small, cheap risks that aren’t worth treating.</p>`,
+      key:"Spend where it pays off; accept what’s cheaper to live with.",
+      task:"Choose the most cost-effective treatment in each case.",
+      hints:["Compare each option’s total yearly cost.","Never spend more on a control than the risk would cost you."],
+      activity:a_cbtreat },
+    { title:"Building the risk register",
+      concept:`<p>Organisations record every risk and its chosen treatment in a <b>risk register</b> — the living document at the heart of risk management. Filling one in well means matching each risk to a sensible, cost-effective response.</p>`,
+      key:"A risk register pairs each risk with its owner and its treatment.",
+      task:"Assign the right treatment to each risk in the register.",
+      hints:["Trivial → accept; rare-but-huge → transfer.","Frequent-and-serious → mitigate; pointless exposure → avoid."],
+      activity:a_register }
+  ]
+}
+];
+
+/* ---------- quiz ---------- */
+const QUIZ=[
+  {topic:"Lesson 1", q:"In risk terminology, something of value that you protect is an…", o:["Asset","Threat","Vulnerability","Control"], a:0, ex:"An asset is what you protect — data, systems, reputation."},
+  {topic:"Lesson 1", q:"A weakness that a threat can exploit is a…", o:["Control","Vulnerability","Asset","Risk appetite"], a:1, ex:"A vulnerability is the exploitable weakness."},
+  {topic:"Lesson 1", q:"Risk is best described as a function of…", o:["Likelihood and impact","Password length","Bandwidth","The number of servers"], a:0, ex:"Risk = likelihood × impact (given a threat, vulnerability and asset)."},
+  {topic:"Lesson 1", q:"A risk exists only when…", o:["A threat can exploit a vulnerability to harm a valuable asset","The firewall is off","There is no antivirus","The office is open"], a:0, ex:"All three — asset, threat and vulnerability — must be present."},
+  {topic:"Lesson 1", q:"The ISMS cycle (ISO 27001) runs as…", o:["Plan–Do–Check–Act, continuously","Once, then stop","Only after a breach","Random order"], a:0, ex:"PDCA is a continuous improvement loop; security is ongoing."},
+  {topic:"Lesson 2", q:"Rating a risk as ‘High’ on a red/amber/green matrix is…", o:["Qualitative analysis","Quantitative analysis","Risk transfer","A control"], a:0, ex:"Category ratings without hard numbers are qualitative."},
+  {topic:"Lesson 2", q:"Single Loss Expectancy (SLE) is calculated as…", o:["Asset Value × Exposure Factor","SLE × ARO","Likelihood × Impact","Cost − Benefit"], a:0, ex:"SLE = AV × EF — the loss from one event."},
+  {topic:"Lesson 2", q:"Annualized Loss Expectancy (ALE) equals…", o:["SLE × ARO","AV × EF","Likelihood only","ARO ÷ SLE"], a:0, ex:"ALE = SLE × ARO — the expected yearly loss."},
+  {topic:"Lesson 2", q:"A laptop worth $2,000 (100% loss) stolen 3 times a year has an ALE of…", o:["$6,000","$2,000","$600","$200"], a:0, ex:"SLE = $2,000; ALE = $2,000 × 3 = $6,000."},
+  {topic:"Lesson 2", q:"A control is worth buying when…", o:["Its cost is less than the loss (ALE) it prevents","It is the newest product","It looks impressive","It costs the most"], a:0, ex:"Spend on a control only when it saves more than it costs."},
+  {topic:"Lesson 3", q:"Buying cyber-insurance to cover breach losses is risk…", o:["Transfer","Avoidance","Mitigation","Acceptance"], a:0, ex:"Insurance shifts the financial impact to a third party — transfer."},
+  {topic:"Lesson 3", q:"Deploying antivirus, backups and training is risk…", o:["Mitigation","Transfer","Avoidance","Acceptance"], a:0, ex:"Adding controls to reduce likelihood/impact is mitigation."},
+  {topic:"Lesson 3", q:"Deciding to simply live with a tiny, cheap risk is risk…", o:["Acceptance","Avoidance","Transfer","Mitigation"], a:0, ex:"When treatment costs more than the risk, you accept it."},
+  {topic:"Lesson 3", q:"The risk left after controls are applied is called…", o:["Residual risk","Inherent risk","Transferred risk","Zero risk"], a:0, ex:"Residual risk remains after treatment and never reaches zero."},
+  {topic:"Lesson 3", q:"Stopping a risky activity entirely is risk…", o:["Avoidance","Acceptance","Transfer","Mitigation"], a:0, ex:"Eliminating the activity removes the risk — avoidance."}
+];
+function gradeOf(sc){ if(sc>=13) return {g:"A",t:"Excellent"}; if(sc>=11) return {g:"B",t:"Very good"}; if(sc>=9) return {g:"C",t:"Pass"}; return {g:"–",t:"Needs revision"}; }
+
+/* ---------- shell ---------- */
+function renderTop(){
+  if(mode==="welcome"||!S.name){ topbar.innerHTML=`<div class="topbar-in"><div class="brand"><span class="brand-ic">⚖️</span><span class="brand-t">Activity Lab<small>Risk Assessment</small></span></div></div>`; return; }
+  const n=doneCount(), inQuiz=mode==="quiz";
+  const initials=S.name.trim().split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+  topbar.innerHTML=`<div class="topbar-in"><button class="brand" id="tbHome" ${inQuiz?"disabled":""} aria-label="Map"><span class="brand-ic">⚖️</span><span class="brand-t">Activity Lab<small>Risk Assessment</small></span></button>
+    <div class="tb-right"><span class="tb-steps"><b>${n}</b>/${TOTAL} done</span><div class="student"><b>${esc(S.name.split(" ")[0])}</b><small>${esc(S.roll)}</small></div>
+    ${inQuiz?`<span class="pill on">Quiz</span>`:`<button class="btn btn-quiet btn-sm" id="tbMap">Map</button>`}</div></div>`;
+  const home=document.getElementById("tbHome"), map=document.getElementById("tbMap");
+  if(home&&!inQuiz) home.addEventListener("click",()=>go(screenOverview));
+  if(map) map.addEventListener("click",()=>go(screenOverview));
+}
+function go(fn,...a){ fn(...a); renderTop(); try{ window.scrollTo(0,0); }catch(e){} }
+
+function screenWelcome(){
+  mode="welcome"; const has=!!S.name;
+  app.innerHTML=`<section class="screen stack">
+    <div class="bare"><div class="eyebrow">Interactive lab · beginner</div><h1>Risk Assessment</h1>
+      <p class="lead">Security is the management of risk, not its elimination. The vocabulary of risk, the ISMS cycle that governs it, the methods for analysing it, and the four ways to treat it.</p>
+      <ul class="facts"><li>3 lessons · 15 hands-on simulations</li><li>A live risk matrix, an ALE calculator, a residual-risk meter and a risk register</li><li>Free hints at every step</li><li>Final quiz worth 15 marks</li></ul></div>
+    <div class="card" id="who"></div></section>`;
+  const who=document.getElementById("who");
+  if(has){ who.innerHTML=`<h3>Welcome back, ${esc(S.name.split(" ")[0])}</h3><p class="muted">Roll no. ${esc(S.roll)} · ${doneCount()}/${TOTAL} done${S.results.length?` · quiz ${S.results.length}×`:""}.</p>
+    <div class="row wrap"><button class="btn" id="cont">Continue</button><button class="btn btn-quiet" id="newst">Different student</button></div>`;
+    document.getElementById("cont").addEventListener("click",()=>go(screenOverview));
+    document.getElementById("newst").addEventListener("click",()=>{ S=fresh(); save(); go(screenWelcome); });
+  } else { who.innerHTML=`<h3>Before you begin</h3><p class="muted small">Your name and roll number appear on your result card.</p>
+    <div class="who-grid"><div class="field"><label for="nm">Full name</label><input class="input" id="nm" maxlength="60" autocomplete="name" placeholder="e.g. Umair Shaikh"></div>
+    <div class="field"><label for="rl">Roll number</label><input class="input" id="rl" maxlength="30" autocomplete="off" placeholder="e.g. 23CS046"></div></div>
+    <div class="err" id="err" aria-live="polite"></div><button class="btn" id="startBtn" style="margin-top:4px">Start</button>`;
+    const nm=document.getElementById("nm"), rl=document.getElementById("rl"), err=document.getElementById("err");
+    function start(){ const n=nm.value.trim().replace(/\s+/g," "), r=rl.value.trim();
+      if(n.length<2){ err.textContent="Enter your full name."; nm.focus(); return; }
+      if(r.length<2){ err.textContent="Enter your roll number."; rl.focus(); return; }
+      if(!/^[A-Za-z0-9\-\/_. ]+$/.test(r)){ err.textContent="Letters, numbers, dashes, slashes and dots only."; rl.focus(); return; }
+      S=fresh(); S.name=n; S.roll=r; save(); go(screenOverview); }
+    document.getElementById("startBtn").addEventListener("click",start);
+    [nm,rl].forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter") start(); })); nm.focus();
+  }
+}
+function modInfo(m){ const cnt=[0,1,2,3,4].filter(i=>S.done[m*5+i]).length; const unlocked=m===0||S.maxPos>=m*5-1; const started=S.maxPos>=m*5;
+  let target=m*5; for(let i=0;i<5;i++){ if(!S.done[m*5+i]){ target=m*5+i; break; } } if(target>S.maxPos+1) target=Math.max(m*5,Math.min(S.maxPos,m*5+4)); return {cnt,unlocked,started,target}; }
+function screenOverview(){
+  mode="map"; const quizOpen=S.maxPos>=14, res=S.results, best=res.length?Math.max(...res.map(r=>r.score)):null;
+  app.innerHTML=`<section class="screen stack">
+    <div class="bare"><div class="eyebrow">Overview</div><h2>What this is about</h2>
+      <p>No system is ever perfectly safe, and trying to make it so would cost far too much. The real job of security is to <b>manage risk</b>: understand what could go wrong, measure how bad it would be, and spend wisely to bring it to an acceptable level.</p>
+      <p>You’ll do that hands-on here — label a risk scenario, tune the risk equation, rate risks on a matrix, run the money formulas, judge whether a control is worth buying, and fill in a real risk register.</p></div>
+    <div class="card"><h3>By the end, you can…</h3><ul class="obj">
+      <li>Use the vocabulary of risk correctly.</li>
+      <li>Explain how risk arises and what the ISMS / PDCA cycle does.</li>
+      <li>Rate risks qualitatively on a matrix.</li>
+      <li>Compute SLE and ALE and judge a control’s cost-benefit.</li>
+      <li>Apply the four treatments and explain residual risk.</li>
+      <li>Build a sensible risk register.</li></ul></div>
+    <div class="bare"><h3>Lessons</h3><div class="path" id="path"></div></div>
+    <div class="card"><h3>Marking</h3>
+      <table class="marks"><thead><tr><th>Part</th><th>Detail</th><th>Marks</th></tr></thead><tbody>
+        <tr><td>Activities</td><td>15 hands-on simulations</td><td>Shown on your card</td></tr>
+        <tr><td>Final quiz</td><td>15 questions, 1 mark each</td><td>15 marks</td></tr>
+        <tr><td>Pass</td><td>9 / 15 · A 13–15 · B 11–12 · C 9–10</td><td>—</td></tr></tbody></table>
+      <p class="small muted" style="margin-top:8px">The quiz unlocks at the end of Lesson 3 — shuffled, no hints, answers lock on submit.</p></div></section>`;
+  const path=document.getElementById("path");
+  MODULES.forEach((mod,m)=>{ const info=modInfo(m); const label=!info.unlocked?"Locked":info.cnt===5?"Review":info.started?"Continue":"Start";
+    const c=blk(`<div class="pcard ${info.unlocked?"":"locked"}"><div class="pnum">${m+1}</div><div><div class="ptitle">${mod.title}</div><div class="pmeta">${mod.blurb} · ${info.cnt}/5 done</div></div>
+      <button class="btn ${info.cnt===5?"btn-ghost":""} btn-sm" ${info.unlocked?"":"disabled"}>${label}</button></div>`).firstElementChild;
+    c.querySelector("button").addEventListener("click",()=>go(screenStep,info.target)); path.appendChild(c); });
+  const q=blk(`<div class="pcard quiz ${quizOpen?"":"locked"}"><div class="pnum">★</div><div><div class="ptitle">Final quiz</div><div class="pmeta">15 questions · 1 mark each${res.length?` · best ${best}/15`:""}</div></div>
+    <button class="btn btn-sm" ${quizOpen?"":"disabled"}>${quizOpen?(res.length?"Retake":"Start"):"Locked"}</button></div>`).firstElementChild;
+  q.querySelector("button").addEventListener("click",()=>go(screenQuizIntro)); path.appendChild(q);
+}
+function screenStep(pos){
+  mode="step"; const m=Math.floor(pos/5), s=pos%5, mod=MODULES[m], st=mod.steps[s];
+  if(pos>S.maxPos){ S.maxPos=pos; save(); }
+  const done=!!S.done[pos]; const nextLabel=d=>d?(s<4?"Continue":"Finish lesson"):"Skip";
+  app.innerHTML=`<section class="screen stack">
+    <div class="bare"><div class="crumbs"><span class="pill">Lesson ${m+1}</span><span>${mod.short}</span><span>·</span><span>Step ${s+1} of 5</span></div>
+      <h2>${st.title}</h2><div class="rail" style="margin-top:10px"><i style="width:${(s+1)/5*100}%"></i></div></div>
+    <div class="bare">${st.concept}<div class="key">🔑 <b>Key idea:</b> ${st.key}</div></div>
+    <div class="actwrap ${done?"done":""}" id="act"><div class="act-top"><span class="act-label">Simulation</span><span class="badge">✓ Completed</span></div>
+      <p class="task">${st.task}</p><div id="body"></div>
+      <div class="hintarea"><button class="btn btn-quiet btn-sm" id="hintBtn">💡 Hint</button><div id="hints"></div></div></div>
+    <div class="stepnav"><button class="btn btn-quiet btn-sm" id="back">◂ Back</button><div class="dots" id="dots" aria-hidden="true"></div>
+      <button class="btn btn-sm ${done?"":"btn-ghost"}" id="next">${nextLabel(done)} ▸</button></div></section>`;
+  const act=document.getElementById("act"), nextBtn=document.getElementById("next");
+  function dots(){ document.getElementById("dots").innerHTML=[0,1,2,3,4].map(i=>`<i class="${i===s?"on":""} ${S.done[m*5+i]?"ok":""}"></i>`).join(""); }
+  dots();
+  const api={ complete(){ if(!S.done[pos]){ S.done[pos]=true; save(); } act.classList.add("done"); nextBtn.classList.remove("btn-ghost"); nextBtn.textContent=nextLabel(true)+" ▸"; dots(); renderTop(); } };
+  let hi=0; const hb=document.getElementById("hintBtn"), hbox=document.getElementById("hints");
+  hb.addEventListener("click",()=>{ if(hi>=st.hints.length) return; hbox.appendChild(blk(`<div class="hintbox"><b>Hint ${hi+1}/${st.hints.length}:</b> ${st.hints[hi]}</div>`).firstElementChild); hi++; if(hi>=st.hints.length){ hb.disabled=true; hb.textContent="No more hints"; } });
+  try{ st.activity(document.getElementById("body"),api); }catch(e){ console.error(e); }
+  document.getElementById("back").addEventListener("click",()=>go(s>0?()=>screenStep(pos-1):screenOverview));
+  nextBtn.addEventListener("click",()=>go(s<4?()=>screenStep(pos+1):()=>screenModuleDone(m)));
+}
+function screenModuleDone(m){
+  mode="done"; const mod=MODULES[m], cnt=[0,1,2,3,4].filter(i=>S.done[m*5+i]).length;
+  app.innerHTML=`<section class="screen stack"><div class="bare done-head"><div class="check">✓</div><h2>Lesson ${m+1} complete</h2><p class="muted">${mod.title} · ${cnt} of 5 simulations</p></div>
+    <div class="card"><h3>What you learned</h3><ul class="take">${mod.takeaways.map(t=>`<li>${t}</li>`).join("")}</ul></div>
+    ${cnt<5?`<p class="muted small center">You skipped ${5-cnt}. You can return any time from the map.</p>`:""}
+    <div class="row wrap center"><button class="btn btn-quiet btn-sm" id="toMap">Map</button><button class="btn btn-sm" id="nextMod">${m<2?`Start Lesson ${m+2}`:"Final quiz"} ▸</button></div></section>`;
+  document.getElementById("toMap").addEventListener("click",()=>go(screenOverview));
+  document.getElementById("nextMod").addEventListener("click",()=>go(m<2?()=>screenStep((m+1)*5):screenQuizIntro));
+}
+let Q=null;
+function screenQuizIntro(){ mode="map"; const n=doneCount();
+  app.innerHTML=`<section class="screen card"><div class="eyebrow">Final quiz</div><h2>Ready, ${esc(S.name.split(" ")[0])}?</h2>
+    <table class="marks" style="margin:12px 0"><tbody><tr><th>Questions</th><td>15, from all three lessons</td></tr><tr><th>Marks</th><td>1 each — 15 total</td></tr>
+      <tr><th>Pass</th><td>9 / 15</td></tr><tr><th>Rules</th><td>No hints · shuffled · answers lock on submit</td></tr>
+      <tr><th>Attempt</th><td>#${S.results.length+1}${S.results.length?` · first was ${S.results[0].score}/15`:""}</td></tr></tbody></table>
+    ${n<TOTAL?`<div class="fb">You’ve done ${n}/${TOTAL} simulations. Finishing them first will help.</div>`:`<div class="fb good">All 15 simulations done — well prepared.</div>`}
+    <div class="row wrap" style="margin-top:14px"><button class="btn btn-quiet btn-sm" id="qback">Map</button><button class="btn btn-sm" id="qgo">Start ▸</button></div></section>`;
+  document.getElementById("qback").addEventListener("click",()=>go(screenOverview));
+  document.getElementById("qgo").addEventListener("click",()=>{ Q={ qs:shuffle(QUIZ).map(q=>Object.assign({},q,{order:shuffle(q.o.map((_,i)=>i))})), i:0, score:0, answers:[], start:Date.now() }; go(screenQuestion); });
+}
+function screenQuestion(){ mode="quiz"; const q=Q.qs[Q.i]; let sel=null, locked=false;
+  app.innerHTML=`<section class="screen card"><div class="row between"><span class="pill">Q${Q.i+1}/${Q.qs.length}</span><span class="pill">Score ${Q.score}</span></div>
+    <div class="rail" style="margin-top:10px"><i style="width:${Q.i/Q.qs.length*100}%"></i></div>
+    <p class="small muted" style="margin:12px 0 0">${q.topic}</p><h3 class="qprompt">${q.q}</h3>
+    <div class="qopts">${q.order.map((oi,k)=>`<button class="qopt" data-oi="${oi}"><span class="ltr">${"ABCD"[k]}</span><span>${q.o[oi]}</span></button>`).join("")}</div>
+    <div id="qfb" aria-live="polite"></div><div class="row end" style="margin-top:14px"><button class="btn btn-sm" id="qsub" disabled>Submit</button></div></section>`;
+  const sub=document.getElementById("qsub"), btns=app.querySelectorAll(".qopt");
+  btns.forEach(b=>b.addEventListener("click",()=>{ if(locked) return; btns.forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); sel=+b.dataset.oi; sub.disabled=false; }));
+  sub.addEventListener("click",()=>{ if(!locked){ if(sel===null) return; locked=true; const ok=sel===q.a; if(ok) Q.score++;
+      Q.answers.push({q:q.q,chosen:q.o[sel],correct:q.o[q.a],ok,ex:q.ex});
+      btns.forEach(x=>{ x.disabled=true; const oi=+x.dataset.oi; if(oi===q.a) x.classList.add("right"); else if(oi===sel) x.classList.add("wrong"); x.classList.remove("sel"); });
+      document.getElementById("qfb").innerHTML=`<div class="fb ${ok?"good":"bad"}"><b>${ok?"Correct. +1":"Not quite."}</b> ${q.ex}</div>`;
+      sub.textContent=Q.i+1<Q.qs.length?"Next ▸":"See result";
+    } else if(Q.i+1<Q.qs.length){ Q.i++; go(screenQuestion); } else finishQuiz(); });
+}
+function finishQuiz(){ const r={ score:Q.score, total:15, pct:Math.round(Q.score/15*100), ms:Date.now()-Q.start, date:new Date().toISOString(), attempt:S.results.length+1, activities:doneCount() }; S.results.push(r); save(); go(screenResult,r,Q.answers); }
+function screenResult(r,answers){ mode="result"; const g=gradeOf(r.score), pass=r.score>=9;
+  const mins=Math.floor(r.ms/60000), secs=Math.round((r.ms%60000)/1000), when=new Date(r.date).toLocaleString();
+  const text=`Risk Assessment — Activity Result
+Name: ${S.name}
+Roll no.: ${S.roll}
+Quiz: ${r.score}/15 (${r.pct}%) — Grade ${g.g} (${g.t}) — ${pass?"PASS":"Needs revision"}
+Activities: ${r.activities}/15
+Attempt: ${r.attempt} · ${mins}m ${secs}s · ${when}`;
+  app.innerHTML=`<section class="screen stack"><div class="card"><div class="row between"><span class="eyebrow" style="margin:0">Result</span><span class="pill">Attempt ${r.attempt}</span></div>
+      <h2 style="margin:8px 0 14px">Risk Assessment result</h2>
+      <div class="ring" style="--p:${r.pct}"><div><div><b>${r.score}</b><span>of 15</span></div></div></div>
+      <div class="kv"><div><small>Student</small><b>${esc(S.name)}</b></div><div><small>Roll no.</small><b>${esc(S.roll)}</b></div>
+        <div><small>Grade</small><b>${g.g} — ${g.t}</b></div><div><small>Status</small><b class="${pass?"status-pass":"status-fail"}">${pass?"Pass":"Needs revision"}</b></div>
+        <div><small>Activities</small><b>${r.activities} / 15</b></div><div><small>Time</small><b>${mins}m ${secs}s</b></div></div>
+      <p class="small muted" style="margin-top:12px">Screenshot this card or copy the text for your teacher.</p>
+      <div class="row wrap"><button class="btn btn-sm" id="copy">Copy result</button><button class="btn btn-quiet btn-sm" id="retake">Retake</button><button class="btn btn-quiet btn-sm" id="rmap">Map</button></div><div id="ca"></div></div>
+    <div class="card"><h3>Review</h3><ul class="review">${answers.map(a=>`<li><b>${a.q}</b><br><span class="${a.ok?"yes":"no"}">${a.ok?"✓":"✗"} Your answer: ${a.chosen}</span>${a.ok?"":`<br><span class="yes">✓ Correct: ${a.correct}</span>`}<div class="small muted" style="margin-top:3px">${a.ex}</div></li>`).join("")}</ul></div></section>`;
+  const copyBtn=document.getElementById("copy");
+  copyBtn.addEventListener("click",()=>{ const fb=()=>{ const ca=document.getElementById("ca"); ca.innerHTML=`<textarea class="copybox" readonly></textarea>`; const ta=ca.querySelector("textarea"); ta.value=text; ta.focus(); ta.select(); };
+    try{ if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(()=>{ copyBtn.textContent="Copied"; setTimeout(()=>copyBtn.textContent="Copy result",2000); }).catch(fb); else fb(); }catch(e){ fb(); } });
+  document.getElementById("retake").addEventListener("click",()=>go(screenQuizIntro));
+  document.getElementById("rmap").addEventListener("click",()=>go(screenOverview));
+}
+load(); go(screenWelcome);
+})();
+</script>
+</body>
+</html>
